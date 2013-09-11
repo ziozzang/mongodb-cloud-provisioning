@@ -1,0 +1,47 @@
+#!/usr/bin/python
+# -*- coding:utf-8 -*-
+#
+# mongoDB configure update script.
+#
+# - code by Jioh L. Jung (zio.zzang@kt.com)
+#
+
+import sys
+
+FILE_NAME = "/etc/mongodb.conf"
+
+
+def get_kv(lo):
+  p = lo.find("=")
+  if p == -1:
+    return None
+  k = i[:p].strip("# \t")
+  v = i[p+1:].strip()
+  return (k, v)
+
+
+if __name__ == '__main__':
+  i = open(FILE_NAME, "r")
+  f = i.read()
+  i.close()
+
+  w = open(FILE_NAME, "w")
+  sp = False
+  fn = False
+
+  for i in f.splitlines(True):
+    v = get_kv(i)
+    if v is None:
+      w.write(i)
+    else:
+      if v[0] == sys.argv[1]:
+        w.write("%s=%s\n" % (sys.argv[1], sys.argv[2]))
+        fn = True
+      else:
+        w.write(i)
+    sp = True
+
+  if fn == False:
+    w.write("\n%s=%s" % (sys.argv[1], sys.argv[2]))
+
+  w.close()
