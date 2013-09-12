@@ -28,7 +28,7 @@ sed -i -e "s,ftp\.daum\.net,kr\.archive\.ubuntu\.com,g" /etc/apt/sources.list
 
 # Setup Environment // =============================================================
 sed -i -e "s,\(TMOUT\)=.*,\1=0,g" /etc/bash.bashrc
-
+locale-gen ko_KR.UTF-8
 
 # Config updater // =============================================================
 wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-conf-set
