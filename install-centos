@@ -1,0 +1,46 @@
+#!/bin/bash
+
+[[ "$(id -u)" -eq 0 ]] || (echo "FATAL: Root privilege is required."; exit 1)
+
+FLAG_X86_64=`uname -a | grep x86_64 | wc -l`
+CURRENT_IP=`ifconfig eth0 | grep -m 1 'inet addr:' | cut -d: -f2 | awk '{print $1}'`
+
+# Centos Network ReConfigure // =============================================================
+rm -f /etc/udev/rules.d/70-persistent-net.rules
+sed -i -e "s,\(HWADDR.*\),#\1,g" /etc/sysconfig/network-scripts/ifcfg-eth0
+/etc/init.d/network restart
+
+
+# Centos TurnOff FireWall  // =============================================================
+service iptables stop
+chkconfig iptables off
+service ip6tables stop
+chkconfig ip6tables off
+
+
+# Add 10gen Repo  // =============================================================
+cat > /etc/yum.repos.d/mongodb.repo << EOF
+[mongodb]
+name=MongoDB Repository
+baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
+gpgcheck=0
+enabled=1
+EOF
+
+yum update -y
+yum install -y mongo-10gen mongo-10gen-server
+
+# Python PIP // =============================================================
+wget http://peak.telecommunity.com/dist/ez_setup.py
+python ez_setup.py
+easy_install pip
+pip install flask
+yum install -y git
+
+
+# Config updater // =============================================================
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-conf-set
+chmod +x mongo-conf-set
+mv -f mongo-conf-set /usr/bin/
+
+rm -f /root/.ssh/authorized_keys
