@@ -21,6 +21,10 @@ def get_kv(lo):
 
 
 if __name__ == '__main__':
+  if len(sys.argv) != 3:
+    print "Usage:\n # %s key value" % sys.argv[0]
+    exit(0)
+
   i = open(FILE_NAME, "r")
   f = i.read()
   i.close()
