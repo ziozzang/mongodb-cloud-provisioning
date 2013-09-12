@@ -1,0 +1,38 @@
+#!/bin/bash
+[[ "$(id -u)" -eq 0 ]] || (echo "FATAL: Root privilege is required."; exit 1)
+
+FLAG_X86_64=`uname -a | grep x86_64 | wc -l`
+CURRENT_IP=`ifconfig eth0 | grep -m 1 'inet addr:' | cut -d: -f2 | awk '{print $1}'`
+UBUNTU_VERSION=`cat /etc/lsb-release | grep "DISTRIB_RELEASE" | awk '{split($0,a,"="); print a[2]}'`
+
+if [[ "${UBUNTU_VERSION}" == "10.04" ]]; then
+  echo "Ubuntu Lucid/10.04"
+else
+  echo "Ubuntu Precise/12.04"
+fi
+
+# Ubuntu Pre-Provisioning. // =============================================================
+sed -i -e "s,kr\.archive\.ubuntu\.com,ftp\.daum\.net,g" /etc/apt/sources.list
+
+# Add 10gen Repo  // =============================================================
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' \
+  | sudo tee /etc/apt/sources.list.d/mongodb.list
+  
+apt-get update -fy
+apt-get upgrade -fy
+apt-get install -fy curl python-pip python-flask mongodb-10gen
+
+sed -i -e "s,ftp\.daum\.net,kr\.archive\.ubuntu\.com,g" /etc/apt/sources.list
+
+
+# Setup Environment // =============================================================
+sed -i -e "s,\(TMOUT\)=.*,\1=0,g" /etc/bash.bashrc
+
+
+# Config updater // =============================================================
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-conf-set
+chmod +x mongo-conf-set
+mv -f mongo-conf-set /usr/bin/
+
+rm -f /root/.ssh/authorized_keys
