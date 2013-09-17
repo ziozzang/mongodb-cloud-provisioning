@@ -29,10 +29,72 @@ sed -i -e "s,ftp\.daum\.net,kr\.archive\.ubuntu\.com,g" /etc/apt/sources.list
 # Setup Environment // =============================================================
 sed -i -e "s,\(TMOUT\)=.*,\1=0,g" /etc/bash.bashrc
 locale-gen ko_KR.UTF-8
+rm -f /root/.ssh/authorized_keys
 
 # Config updater // =============================================================
 wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-conf-set
 chmod +x mongo-conf-set
-mv -f mongo-conf-set /usr/bin/
 
-rm -f /root/.ssh/authorized_keys
+cp mongo-conf-set /usr/bin/set-mongodb.conf
+cp mongo-conf-set /usr/bin/set-mongos.conf
+cp mongo-conf-set /usr/bin/set-mongoconfig.conf
+rm -f mongo-conf-set
+
+sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongos\.conf," /usr/bin/set-mongos.conf
+sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongoconfig\.conf," /usr/bin/set-mongoconfig.conf
+
+cp /etc/init.d/mongodb /etc/init.d/mongos
+cp /etc/init.d/mongodb /etc/init.d/mongoconfig
+
+cp /etc/mongodb.conf /etc/mongos.conf
+cp /etc/mongodb.conf /etc/mongoconfig.conf
+
+set-mongoconfig.conf dbpath "/var/lib/mongoconfig"
+set-mongoconfig.conf logpath "/var/log/mongodb/mongoconfig.log"
+
+sed -i -e "s,\(dbpath\),#\1," /etc/mongos.conf
+set-mongos.conf logpath "/var/log/mongodb/mongos.log"
+
+cat > /etc/init/mongos.conf << EOF
+# Ubuntu upstart file at /etc/init/mongos.conf
+
+limit nofile 20000 20000
+
+kill timeout 300 # wait 300s between SIGTERM and SIGKILL.
+
+pre-start script
+    mkdir -p /var/log/mongodb/
+end script
+
+start on runlevel [2345]
+stop on runlevel [06]
+
+script
+  ENABLE_MONGODB="yes"
+  if [ -f /etc/default/mongodb ]; then . /etc/default/mongodb; fi
+  if [ "x\$ENABLE_MONGODB" = "xyes" ]; then exec start-stop-daemon --start --quiet --chuid mongos --exec  /usr/bin/mongos -- --config /etc/mongos.conf; fi
+end script
+EOF
+
+cat > /etc/init/mongoconfig.conf << EOF
+# Ubuntu upstart file at /etc/init/mongoconfig.conf
+
+limit nofile 20000 20000
+
+kill timeout 300 # wait 300s between SIGTERM and SIGKILL.
+
+pre-start script
+    mkdir -p /var/lib/mongoconfig/
+    mkdir -p /var/log/mongodb/
+end script
+
+start on runlevel [2345]
+stop on runlevel [06]
+
+script
+  ENABLE_MONGODB="yes"
+  if [ -f /etc/default/mongodb ]; then . /etc/default/mongodb; fi
+  if [ "x\$ENABLE_MONGODB" = "xyes" ]; then exec start-stop-daemon --start --quiet --chuid mongoconfig --exec  /usr/bin/mongod -- --config /etc/mongoconfig.conf; fi
+end script
+EOF
+
