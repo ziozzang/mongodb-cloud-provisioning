@@ -43,6 +43,18 @@ rm -f mongo-conf-set
 sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongos\.conf," /usr/bin/set-mongos.conf
 sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongoconfig\.conf," /usr/bin/set-mongoconfig.conf
 
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-conf-unset
+chmod +x mongo-conf-unset
+
+cp mongo-conf-unset /usr/bin/unset-mongodb.conf
+cp mongo-conf-unset /usr/bin/unset-mongos.conf
+cp mongo-conf-unset /usr/bin/unset-mongoconfig.conf
+rm -f mongo-conf-unset
+
+sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongos\.conf," /usr/bin/unset-mongos.conf
+sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongoconfig\.conf," /usr/bin/unset-mongoconfig.conf
+
+
 cp /etc/init.d/mongodb /etc/init.d/mongos
 cp /etc/init.d/mongodb /etc/init.d/mongoconfig
 
