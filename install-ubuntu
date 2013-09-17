@@ -64,7 +64,7 @@ cp /etc/mongodb.conf /etc/mongoconfig.conf
 set-mongoconfig.conf dbpath "/var/lib/mongoconfig"
 set-mongoconfig.conf logpath "/var/log/mongodb/mongoconfig.log"
 
-sed -i -e "s,\(dbpath\),#\1," /etc/mongos.conf
+unset-mongos.conf dbpath
 set-mongos.conf logpath "/var/log/mongodb/mongos.log"
 
 cat > /etc/init/mongos.conf << EOF
