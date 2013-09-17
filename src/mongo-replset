@@ -1,0 +1,68 @@
+#!/usr/bin/python
+#
+# MongoDB ReplicaSet Initiate script
+# -- Code by Jioh L. jung (ziozzang@gmail.com)
+#
+# Usage [cmd] [replname] [host1]...[hostn]
+#       if host name is set to "self", it replace to ip_addr of eth0
+#
+
+import sys
+import json
+import os
+import socket
+import fcntl
+import struct
+
+def get_ip_address(ifname):
+  s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  return socket.inet_ntoa(fcntl.ioctl(
+        s.fileno(),
+        0x8915,  # SIOCGIFADDR
+        struct.pack('256s', ifname[:15])
+    )[20:24])
+
+def make_base(name):
+  res = {}
+  res["replSetInitiate"] = {}
+  res["replSetInitiate"]["_id"] = name
+  res["replSetInitiate"]["members"] = []
+  return res
+
+def add_server_host(arr, host):
+  if host.find("self") == 0:
+    ip = get_ip_address("eth0")
+    l = host.split(":")
+    if len(l) > 1:
+      host = "%s:%s" % (ip, l[1])
+    else:
+      host = "%s" % ip
+  h = {}
+  h["_id"] = len(arr["replSetInitiate"]["members"])
+  h["host"] = host
+  arr["replSetInitiate"]["members"].append(h)
+
+  return arr
+
+def make_command(arr, fn):
+  o = open(fn, "w")
+  o.write("use admin\n")
+  o.write("db.runCommand(")
+  o.write(json.dumps(arr))
+  o.write(")\n")
+  o.close()
+
+if __name__ == '__main__':
+  fn = "/tmp/mongo-replset.query"
+  log = "/var/log/mongo-replset.log"
+
+  bs = make_base(sys.argv[1])
+  for i in sys.argv[2:]:
+    #print i
+    bs = add_server_host(bs, i)
+
+  make_command(bs, fn)
+
+  os.system("cat %s >> %s" % (fn, log))
+  os.system("cat %s | mongo >> %s" % (fn, log))
+  
