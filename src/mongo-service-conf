@@ -1,18 +1,17 @@
 #!/bin/bash
 
 SERVICE_NAME=${1?"Usage: $0 [service_name] (enable|disable)"}
+FILE_NAME="/etc/init/${SERVICE_NAME}.conf"
+
 case $SERVICE_NAME in
 mongodb)
     ENV_NAME="ENABLE_MONGODB"
-    FILE_NAME=/etc/init/mongodb.conf
     ;;
 mongos)
     ENV_NAME="ENABLE_MONGOS"
-    FILE_NAME=/etc/init/mongos.conf
     ;;
 mongoconfig)
     ENV_NAME="ENABLE_MONGOCONFIG"
-    FILE_NAME=/etc/init/mongoconfig.conf
     ;;
 *)
     echo "unsupport service_name."
@@ -24,9 +23,11 @@ COMMAND=${2?"Usage: $0 [service_name] (enable|disable)"}
 case $COMMAND in
 enable)
     sed -i -e "s,\(${ENV_NAME}\)=.*,\1=\"yes\"," ${FILE_NAME}
+    service $1 start
     ;;
 
 disable)
+    service $1 stop
     sed -i -e "s,\(${ENV_NAME}\)=.*,\1=\"no\"," ${FILE_NAME}
     ;;
 
