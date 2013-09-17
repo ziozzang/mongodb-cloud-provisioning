@@ -107,3 +107,9 @@ mv mongo-service-conf /usr/bin/mongo-service
 mongo-service mongodb disable
 mongo-service mongos disable
 mongo-service mongoconfig disable
+
+
+# Replicaset initiate utility
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-replset
+chmod +x mongo-replset
+mv mongo-replset /usr/bin/mongo-replset
