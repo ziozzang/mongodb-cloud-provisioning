@@ -113,3 +113,8 @@ mongo-service mongoconfig disable
 wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-replset
 chmod +x mongo-replset
 mv mongo-replset /usr/bin/mongo-replset
+
+# Shard initiate utility
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-shard
+chmod +x mongo-shard
+mv mongo-shard /usr/bin/mongo-shard
