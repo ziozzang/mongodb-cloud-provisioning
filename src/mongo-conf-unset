@@ -1,0 +1,4 @@
+#!/bin/bash
+FILE_NAME="/etc/mongodb.conf"
+PARAM="$1"
+sed -i -e "s,^\(${PARAM}\),#\1," ${FILE_NAME}
