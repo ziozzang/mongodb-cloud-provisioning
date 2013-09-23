@@ -1,0 +1,30 @@
+#!/bin/bash
+if [[ ! -f "/var/.run_once_executed" ]]; then
+  # ban script run twice.
+  touch /var/.run_once_executed
+  
+  TARGET="/tmp/run_once_script"
+  
+  OS_DIST=`cat /etc/issue | head -n 1 | awk '{print $1}'`
+  if [[ "$OS_DIST" == "Ubuntu" ]]; then
+    DHCP_LOG_PATH="/var/lib/dhcp/dhclient.eth0.leases"
+  elif [[ "$OS_DIST" == "CentOS" ]]; then
+    DHCP_LOG_PATH="/var/lib/dhclient/dhclient-eth0.leases"
+  else
+    echo "doesn't support."
+    exit 1
+  fi
+
+  META_IP=`cat ${DHCP_LOG_PATH} | grep dhcp-server-identifier | awk '{print $3}' | sed -e 's/;//' | tail -n 1`
+  CURRENT_IP=`ifconfig eth0 | grep -m 1 'inet addr:' | cut -d: -f2 | awk '{print $1}'`
+  
+  do
+    wget -O ${TARGET} http://${META_IP}/latest/user-data
+    if [[ "$?" -eq "0" ]]; then
+      break
+    fi
+    sleep 5
+  done
+  
+  bash ${TARGET}
+fi
