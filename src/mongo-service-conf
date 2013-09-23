@@ -22,13 +22,25 @@ COMMAND=${2?"Usage: $0 [service_name] (enable|disable)"}
 
 case $COMMAND in
 enable)
-    sed -i -e "s,\(${ENV_NAME}\)=.*,\1=\"yes\"," ${FILE_NAME}
+    if [ -f ${FILE_NAME} ]; then
+        # For Ubuntu or upstart using linux system
+        sed -i -e "s,\(${ENV_NAME}\)=.*,\1=\"yes\"," ${FILE_NAME}
+    else
+        # For Centos/RHEL
+        chkconfig --add $1
+    fi
     service $1 start
     ;;
 
 disable)
     service $1 stop
-    sed -i -e "s,\(${ENV_NAME}\)=.*,\1=\"no\"," ${FILE_NAME}
+    if [ -f ${FILE_NAME} ]; then
+        # For Ubuntu or upstart using linux system
+        sed -i -e "s,\(${ENV_NAME}\)=.*,\1=\"no\"," ${FILE_NAME}
+    else
+        # For Centos/RHEL
+        chkconfig --del $1
+    fi
     ;;
 
 *)
