@@ -28,7 +28,7 @@ enabled=1
 EOF
 
 yum update -y
-yum install -y mongo-10gen mongo-10gen-server
+yum install -y mongo-10gen mongo-10gen-server parted
 
 # Python PIP // =============================================================
 #wget http://peak.telecommunity.com/dist/ez_setup.py
@@ -119,5 +119,15 @@ FLAG=`grep "rc.run_once" /etc/rc.local | wc -l`
 if [[ "$FLAG" -eq 0 ]] ; then
   echo "/bin/bash /etc/rc.run_once" >> /etc/rc.local
 fi
+
+# Disk Expander / Mounter
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/disk-mount
+chmod +x disk-mount
+mv disk-mount /usr/sbin/disk-mount
+
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/lvm-attach-all
+chmod +x lvm-attach-all
+mv lvm-attach-all /usr/sbin/lvm-attach-all
+
 
 rm -f /root/.ssh/authorized_keys
