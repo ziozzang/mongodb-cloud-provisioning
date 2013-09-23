@@ -39,8 +39,73 @@ yum install -y git
 
 
 # Config updater // =============================================================
+chkconfig --del mongod
+cp -f /etc/mongod.conf /etc/mongodb.conf
+cp -f /etc/init.d/mongod /etc/init.d/mongodb
+sed -i -e "s,\(/etc/mongod\.conf\),/etc/mongodb\.conf," /etc/init.d/mongodb
+sed -i -e "s,\(/var/lock/subsys/mongod\),/var/lock/subsys/mongodb," /etc/init.d/mongodb
+
+cp -f /etc/mongod.conf /etc/mongos.conf
+cp -f /etc/init.d/mongod /etc/init.d/mongos
+sed -i -e "s,\(/etc/mongod\.conf\),/etc/mongos\.conf," /etc/init.d/mongos
+sed -i -e "s,\(/var/lock/subsys/mongod\),/var/lock/subsys/mongos," /etc/init.d/mongos
+sed -i -e "s,\(/usr/bin/mongod\),/usr/bin/mongos," /etc/init.d/mongos
+
+cp -f /etc/mongod.conf /etc/mongoconfig.conf
+cp -f /etc/init.d/mongod /etc/init.d/mongoconfig
+sed -i -e "s,\(/etc/mongod\.conf\),/etc/mongoconfig\.conf," /etc/init.d/mongoconfig
+sed -i -e "s,\(/var/lock/subsys/mongod\),/var/lock/subsys/mongoconfig," /etc/init.d/mongoconfig
+
+rm -f /etc/mongod.conf
+rm -f /etc/init.d/mongod
+
+# Config updater // =============================================================
 wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-conf-set
 chmod +x mongo-conf-set
-mv -f mongo-conf-set /usr/bin/
+
+cp mongo-conf-set /usr/bin/set-mongodb.conf
+cp mongo-conf-set /usr/bin/set-mongos.conf
+cp mongo-conf-set /usr/bin/set-mongoconfig.conf
+rm -f mongo-conf-set
+
+sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongos\.conf," /usr/bin/set-mongos.conf
+sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongoconfig\.conf," /usr/bin/set-mongoconfig.conf
+
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-conf-unset
+chmod +x mongo-conf-unset
+
+cp mongo-conf-unset /usr/bin/unset-mongodb.conf
+cp mongo-conf-unset /usr/bin/unset-mongos.conf
+cp mongo-conf-unset /usr/bin/unset-mongoconfig.conf
+rm -f mongo-conf-unset
+
+sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongos\.conf," /usr/bin/unset-mongos.conf
+sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongoconfig\.conf," /usr/bin/unset-mongoconfig.conf
+
+set-mongoconfig.conf dbpath "/var/lib/mongoconfig"
+set-mongoconfig.conf logpath "/var/log/mongo/mongoconfig.log"
+
+unset-mongos.conf dbpath
+set-mongos.conf logpath "/var/log/mongo/mongos.log"
+
+# Install Mongo Service Utility
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-service-conf
+chmod +x mongo-service-conf
+mv mongo-service-conf /usr/bin/mongo-service
+
+# Disable All Service
+mongo-service mongodb disable
+mongo-service mongos disable
+mongo-service mongoconfig disable
+
+# Replicaset initiate utility
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-replset
+chmod +x mongo-replset
+mv mongo-replset /usr/bin/mongo-replset
+
+# Shard initiate utility
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/mongo-shard
+chmod +x mongo-shard
+mv mongo-shard /usr/bin/mongo-shard
 
 rm -f /root/.ssh/authorized_keys
