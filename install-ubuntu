@@ -144,10 +144,10 @@ if [[ "$FLAG" -eq 0 ]] ; then
 fi
 
 # Disk Expander / Mounter
-wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/disk-mount
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/disk-mount
 chmod +x disk-mount
 mv disk-mount /usr/sbin/disk-mount
 
-wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/lvm-attach-all
+wget https://raw.github.com/ziozzang/mongodb-cloud-provisioning/master/src/lvm-attach-all
 chmod +x lvm-attach-all
 mv lvm-attach-all /usr/sbin/lvm-attach-all
