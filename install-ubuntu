@@ -76,6 +76,8 @@ mkdir -p /var/lib/mongoconfig
 chown -R mongodb:mongodb /var/lib/mongo*
 
 
+sed -i -e "s,\(--exec\),--pidfile /var/run/mongodb.pid --startas,g" /etc/init/mongodb.conf
+
 cat > /etc/init/mongos.conf << EOF
 # Ubuntu upstart file at /etc/init/mongos.conf
 
@@ -93,7 +95,7 @@ stop on runlevel [06]
 script
   ENABLE_MONGOS="yes"
   if [ -f /etc/default/mongodb ]; then . /etc/default/mongodb; fi
-  if [ "x\$ENABLE_MONGOS" = "xyes" ]; then exec start-stop-daemon --start --quiet --chuid mongodb --exec  /usr/bin/mongos -- --config /etc/mongos.conf; fi
+  if [ "x\$ENABLE_MONGOS" = "xyes" ]; then exec start-stop-daemon --start --quiet --chuid mongodb --pidfile /var/run/mongos.pid --startas  /usr/bin/mongos -- --config /etc/mongos.conf; fi
 end script
 EOF
 
@@ -115,7 +117,7 @@ stop on runlevel [06]
 script
   ENABLE_MONGOCONFIG="yes"
   if [ -f /etc/default/mongodb ]; then . /etc/default/mongodb; fi
-  if [ "x\$ENABLE_MONGOCONFIG" = "xyes" ]; then exec start-stop-daemon --start --quiet --chuid mongodb --exec  /usr/bin/mongod -- --config /etc/mongoconfig.conf; fi
+  if [ "x\$ENABLE_MONGOCONFIG" = "xyes" ]; then exec start-stop-daemon --start --quiet --chuid mongodb --pidfile /var/run/mongoconfig.pid --startas  /usr/bin/mongod -- --config /etc/mongoconfig.conf; fi
 end script
 EOF
 
