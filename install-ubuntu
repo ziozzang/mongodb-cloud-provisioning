@@ -60,6 +60,8 @@ ln -s /lib/init/upstart-job /etc/init.d/mongos
 cp /etc/mongodb.conf /etc/mongos.conf
 cp /etc/mongodb.conf /etc/mongoconfig.conf
 
+set-mongodb.conf pidfilepath /var/run/mongodb/mongodb.pid
+
 set-mongoconfig.conf dbpath "/var/lib/mongoconfig"
 set-mongoconfig.conf logpath "/var/log/mongodb/mongoconfig.log"
 set-mongoconfig.conf pidfilepath "/var/run/mongoconfig/mongoconfig.pid"
