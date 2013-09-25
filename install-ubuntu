@@ -68,6 +68,12 @@ unset-mongos.conf dbpath
 set-mongos.conf logpath "/var/log/mongodb/mongos.log"
 set-mongos.conf pidfilepath "/var/run/mongos/mongos.pid"
 
+mkdir -p /var/lib/mongodb
+mkdir -p /var/lib/mongos
+mkdir -p /var/lib/mongoconfig
+chown -R mongodb:mongodb /var/lib/mongo*
+
+
 cat > /etc/init/mongos.conf << EOF
 # Ubuntu upstart file at /etc/init/mongos.conf
 
