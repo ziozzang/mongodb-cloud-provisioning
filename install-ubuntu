@@ -54,9 +54,8 @@ rm -f mongo-conf-unset
 sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongos\.conf," /usr/bin/unset-mongos.conf
 sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongoconfig\.conf," /usr/bin/unset-mongoconfig.conf
 
-
-cp /etc/init.d/mongodb /etc/init.d/mongos
-cp /etc/init.d/mongodb /etc/init.d/mongoconfig
+ln -s /lib/init/upstart-job /etc/init.d/mongoconfig
+ln -s /lib/init/upstart-job /etc/init.d/mongos
 
 cp /etc/mongodb.conf /etc/mongos.conf
 cp /etc/mongodb.conf /etc/mongoconfig.conf
