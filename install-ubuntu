@@ -65,6 +65,7 @@ set-mongodb.conf pidfilepath /var/run/mongodb/mongodb.pid
 set-mongoconfig.conf dbpath "/var/lib/mongoconfig"
 set-mongoconfig.conf logpath "/var/log/mongodb/mongoconfig.log"
 set-mongoconfig.conf pidfilepath "/var/run/mongoconfig/mongoconfig.pid"
+set-mongoconfig.conf configsvr true
 
 unset-mongos.conf dbpath
 set-mongos.conf logpath "/var/log/mongodb/mongos.log"
@@ -93,7 +94,7 @@ start on runlevel [2345]
 stop on runlevel [06]
 
 script
-  ENABLE_MONGOS="yes"
+  ENABLE_MONGOS="no"
   if [ -f /etc/default/mongodb ]; then . /etc/default/mongodb; fi
   if [ "x\$ENABLE_MONGOS" = "xyes" ]; then exec start-stop-daemon --start --quiet --chuid mongodb --pidfile /var/run/mongos.pid --startas  /usr/bin/mongos -- --config /etc/mongos.conf; fi
 end script
@@ -115,7 +116,7 @@ start on runlevel [2345]
 stop on runlevel [06]
 
 script
-  ENABLE_MONGOCONFIG="yes"
+  ENABLE_MONGOCONFIG="no"
   if [ -f /etc/default/mongodb ]; then . /etc/default/mongodb; fi
   if [ "x\$ENABLE_MONGOCONFIG" = "xyes" ]; then exec start-stop-daemon --start --quiet --chuid mongodb --pidfile /var/run/mongoconfig.pid --startas  /usr/bin/mongod -- --config /etc/mongoconfig.conf; fi
 end script
