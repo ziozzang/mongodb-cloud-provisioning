@@ -47,7 +47,7 @@ def add_server_host(arr, host):
 def make_command(arr, fn):
   o = open(fn, "w")
   o.write("use admin\n")
-  o.write("rs.initiate(")
+  o.write("db.runCommand(")
   o.write(json.dumps(arr))
   o.write(")\n")
   o.close()
