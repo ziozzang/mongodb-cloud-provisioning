@@ -30,9 +30,13 @@ def add_server_host(arr, host):
       host = "%s:%s" % (ip, l[1])
     else:
       host = "%s" % ip
-  arr = "%s,%s" % (arr, host)
 
-  return arr[1:]
+  if len(arr) != 0:
+    arr = "%s,%s" % (arr, host)
+  else:
+    arr = "%s" % host
+
+  return arr
 
 def make_command(arr, fn):
   o = open(fn, "w")
