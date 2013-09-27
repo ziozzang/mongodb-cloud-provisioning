@@ -56,6 +56,9 @@ cp -f /etc/init.d/mongod /etc/init.d/mongoconfig
 sed -i -e "s,\(/etc/mongod\.conf\),/etc/mongoconfig\.conf," /etc/init.d/mongoconfig
 sed -i -e "s,\(/var/lock/subsys/mongod\),/var/lock/subsys/mongoconfig," /etc/init.d/mongoconfig
 
+mkdir /var/lib/mongoconfig
+chown -R mongod:mongod /var/lib/mongoconfig
+
 rm -f /etc/mongod.conf
 rm -f /etc/init.d/mongod
 
