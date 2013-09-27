@@ -88,6 +88,7 @@ sed -i -e "s,\(/etc/mongodb\.conf\),/etc/mongoconfig\.conf," /usr/bin/unset-mong
 set-mongoconfig.conf dbpath "/var/lib/mongoconfig"
 set-mongoconfig.conf logpath "/var/log/mongo/mongoconfig.log"
 set-mongoconfig.conf pidfilepath "/var/run/mongoconfig/mongoconfig.pid"
+set-mongoconfig.conf configsvr true
 
 unset-mongos.conf dbpath
 set-mongos.conf logpath "/var/log/mongo/mongos.log"
