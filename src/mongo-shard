@@ -50,6 +50,16 @@ if __name__ == '__main__':
   fn = "/tmp/mongo-shardset.query"
   log = "/var/log/mongo-shardset.log"
 
+  port = "27017"
+
+  if sys.argv[1][0:2] == "--":
+    param = sys.argv[1][2:]
+    parsed = param.split("=")
+    if parsed[0] == "port":
+      port = parsed[1]
+      
+    sys.argv = sys.argv[0:1] + sys.argv[2:]
+
   bs = ""
   for i in sys.argv[2:]:
     bs = add_server_host(bs, i)
@@ -59,5 +69,5 @@ if __name__ == '__main__':
   make_command(asc, fn)
 
   os.system("cat %s >> %s" % (fn, log))
-  os.system("cat %s | mongo >> %s" % (fn, log))
+  os.system("cat %s | mongo --port %s >> %s" % (fn, port, log))
   
