@@ -16,5 +16,5 @@ if [[ ! -f "/var/.run_once_executed" ]]; then
   META_IP=`cat ${DHCP_LOG_PATH} | grep dhcp-server-identifier | awk '{print $3}' | sed -e 's/;//' | tail -n 1`
   CURRENT_IP=`ifconfig eth0 | grep -m 1 'inet addr:' | cut -d: -f2 | awk '{print $1}'`
   
-  curl http://${META_IP}/latest/user-data | bash
+  curl --retry 99 --retry-delay 10 --max-time 5 http://${META_IP}/latest/user-data | bash
 fi
