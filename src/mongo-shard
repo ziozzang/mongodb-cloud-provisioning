@@ -64,7 +64,7 @@ if __name__ == '__main__':
   for i in sys.argv[2:]:
     bs = add_server_host(bs, i)
 
-  if sys.argv[1][0] == "*":
+  if sys.argv[1][0] == "-" or sys.argv[1][0] == "*":
     ns = "%s" % bs
   else:
     ns = "%s/%s" % (sys.argv[1], bs)
