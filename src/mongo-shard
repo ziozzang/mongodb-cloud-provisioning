@@ -82,12 +82,15 @@ cat $FN >> $TLOG
 cat $FN | mongo --port $PORT > $FLOG  2>&1
 CNT1=`grep -i "error" $FLOG | grep -i "connect" | wc -l`
 CNT2=`tail -n 1 $FLOG | grep -i "bye" | wc -l`
-while [ $CNT1 -gt 0 ] || [ $CNT2 -ne 1 ]
+N=1
+while [ $N -lt 10 ] && [ $CNT1 -gt 0 ] || [ $N -lt 10 ] && [ $CNT2 -ne 1 ]
 do
   sleep 3
   cat $FN | mongo --port $PORT > $FLOG  2>&1
   CNT1=`grep -i "error" $FLOG | grep -i "connect" | wc -l`
   CNT2=`tail -n 1 $FLOG | grep -i "bye" | wc -l`
+  N=$[ N + 1 ]
+  echo "$N"
 done
 cat $FLOG >> $TLOG
 """.format(fn=fn,flog=flog,log=log,port=port)
