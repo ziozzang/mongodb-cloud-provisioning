@@ -85,7 +85,7 @@ CNT2=`tail -n 1 $FLOG | grep -i "bye" | wc -l`
 N=1
 while [ $N -lt 10 ] && [ $CNT1 -gt 0 ] || [ $N -lt 10 ] && [ $CNT2 -ne 1 ]
 do
-  sleep 3
+  sleep 5
   cat $FN | mongo --port $PORT > $FLOG  2>&1
   CNT1=`grep -i "error" $FLOG | grep -i "connect" | wc -l`
   CNT2=`tail -n 1 $FLOG | grep -i "bye" | wc -l`
