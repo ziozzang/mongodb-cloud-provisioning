@@ -79,12 +79,12 @@ FLOG="{flog}"
 TLOG="{log}"
 PORT="{port}"
 cat $FN >> $TLOG
-cat $FN | mongo --port $PORT > $FLOG
+cat $FN | mongo --port $PORT > $FLOG  2>&1
 CNT=`grep -i "error" $FLOG | grep -i "connect" | wc -l`
 while [ $CNT -gt 0 ]
 do
   sleep 3
-  cat $FN | mongo --port $PORT > $FLOG
+  cat $FN | mongo --port $PORT > $FLOG  2>&1
   CNT=`grep -i "error" $FLOG | grep -i "connect" | wc -l`
 done
 cat $FLOG >> $TLOG
