@@ -90,7 +90,6 @@ do
   CNT1=`grep -i "error" $FLOG | grep -i "connect" | wc -l`
   CNT2=`tail -n 1 $FLOG | grep -i "bye" | wc -l`
   N=$[ N + 1 ]
-  echo "$N"
 done
 cat $FLOG >> $TLOG
 """.format(fn=fn,flog=flog,log=log,port=port)
