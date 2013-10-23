@@ -89,7 +89,6 @@ do
   CNT=`grep -i "error" $FLOG | grep -i "connect" | wc -l`
 done
 cat $FLOG >> $TLOG
-rm -f $FLOG
 """.format(fn=fn,flog=flog,log=log,port=port)
   open(scrp,"w").write(scriptsc)
   os.system("bash %s" % scrp)
