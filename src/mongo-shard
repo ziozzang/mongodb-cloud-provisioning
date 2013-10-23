@@ -47,7 +47,9 @@ def make_command(arr, fn):
   o.close()
 
 if __name__ == '__main__':
+  scrp = "/tmp/mongo-shardset.bash"
   fn = "/tmp/mongo-shardset.query"
+  flog = "/tmp/mongo-shardset.log"
   log = "/var/log/mongo-shardset.log"
 
   port = "27017"
@@ -71,6 +73,24 @@ if __name__ == '__main__':
   asc = { "addshard" : ns }
   make_command(asc, fn)
 
-  os.system("cat %s >> %s" % (fn, log))
-  os.system("cat %s | mongo --port %s >> %s" % (fn, port, log))
-  
+  scriptsc = """
+#!/bin/bash
+FN="{fn}"
+FLOG="{flog}"
+TLOG="{log}"
+PORT="{port}"
+cat $FN >> $TLOG
+cat $FN | mongo --port $PORT > $FLOG
+CNT=`grep -i "error" $FLOG | grep -i "connect" | wc -l`
+
+while [ $CNT -eq 0 ]
+do
+  sleep 3
+  cat $FN | mongo --port $PORT > $FLOG
+  CNT=`grep -i "error" $FLOG | grep -i "connect" | wc -l`
+done
+cat $FLOG >> $TLOG
+rm -f $FLOG
+""".format(fn=fn,flog=flog,log=log,port=port)
+  open(scrp,"w").write(scriptsc)
+  os.system("bash %s" % scrp)
