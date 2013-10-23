@@ -74,8 +74,7 @@ if __name__ == '__main__':
 
   make_command(bs, fn)
 
-  scriptsc = """
-#!/bin/bash
+  scriptsc = """#!/bin/bash
 FN="{fn}"
 FLOG="{flog}"
 TLOG="{log}"
