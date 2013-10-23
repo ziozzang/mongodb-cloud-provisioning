@@ -82,7 +82,6 @@ PORT="{port}"
 cat $FN >> $TLOG
 cat $FN | mongo --port $PORT > $FLOG
 CNT=`grep -i "error" $FLOG | grep -i "connect" | wc -l`
-
 while [ $CNT -gt 0 ]
 do
   sleep 3
@@ -90,7 +89,6 @@ do
   CNT=`grep -i "error" $FLOG | grep -i "connect" | wc -l`
 done
 cat $FLOG >> $TLOG
-rm -f $FLOG
 """.format(fn=fn,flog=flog,log=log,port=port)
   open(scrp,"w").write(scriptsc)
   os.system("bash %s" % scrp)
