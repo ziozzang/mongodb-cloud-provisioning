@@ -73,8 +73,7 @@ if __name__ == '__main__':
   asc = { "addshard" : ns }
   make_command(asc, fn)
 
-  scriptsc = """
-#!/bin/bash
+  scriptsc = """#!/bin/bash
 FN="{fn}"
 FLOG="{flog}"
 TLOG="{log}"
